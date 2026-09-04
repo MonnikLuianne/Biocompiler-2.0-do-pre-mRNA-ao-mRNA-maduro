@@ -211,7 +211,7 @@ O processamento de cada sequência segue uma ordem definida.
                                            │
 ```
 
-# ⚠️ Classificações
+### ⚠️ Classificações
 
 O BioCompiler 2.0 pode produzir as seguintes classificações:
 
