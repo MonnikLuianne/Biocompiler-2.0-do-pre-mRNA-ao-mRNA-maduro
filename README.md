@@ -248,12 +248,12 @@ git clone https://github.com/MonnikLuianne/Biocompiler-2.0-do-pre-mRNA-ao-mRNA-m
 cd Biocompiler-2.0-do-pre-mRNA-ao-mRNA-maduro
 3. Criar o ambiente virtual
 
-# No Windows:
+ No Windows:
 
 python -m venv .venv
 4. Ativar o ambiente virtual
 
-# No Windows:
+ No Windows:
 .venv\Scripts\activate
 
 5. Instalar as dependências
