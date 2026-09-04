@@ -215,29 +215,29 @@ O processamento de cada sequência segue uma ordem definida.
 
 O BioCompiler 2.0 pode produzir as seguintes classificações:
 
-# ✅ CORRETO
+ ✅ CORRETO
 
 A sequência possui uma estrutura válida de splicing e existe apenas uma possibilidade válida de processamento.
 
 O sistema realiza o splicing e gera o mRNA maduro.
 
-# ❌ BUG - sítio 5'
+ ❌ BUG - sítio 5'
 
 O sítio 5', representado por GU, está ausente, alterado ou não possui estrutura suficiente para iniciar corretamente o íntron.
 
-# ❌ BUG - branch point
+ ❌ BUG - branch point
 
 Existe uma estrutura com GU e AG, mas não foi encontrado um branch point válido de acordo com a regra estabelecida.
 
-# ❌ BUG - sítio 3'
+ ❌ BUG - sítio 3'
 
 Existe um sítio 5' (GU), mas não foi encontrado um sítio 3' (AG) válido posteriormente.
 
-# ❌ BUG - íntron incompleto
+ ❌ BUG - íntron incompleto
 
 A sequência apresenta um início de íntron (GU), porém a estrutura não possui nucleotídeos suficientes para formar um íntron completo.
 
-# ⚠️ AMBÍGUO - splicing alternativo
+ ⚠️ AMBÍGUO - splicing alternativo
 
 A sequência apresenta mais de uma possibilidade válida de processamento.
 
@@ -264,16 +264,15 @@ python biocompiler.py
 
 O sistema realizará o processamento das 60 sequências presentes no arquivo:
 
-# BioCompiler_2_0_entrada_60_casos.txt
+ BioCompiler_2_0_entrada_60_casos.txt
 
 Os resultados serão apresentados no terminal e também será gerado o arquivo:
-
-# resultados.txt
+ resultados.txt
+ 
 7. Executar a interface gráfica
-
 Caso o arquivo app.py esteja disponível no projeto:
 
-# streamlit run app.py
+ streamlit run app.py
 
 Após executar o comando, o Streamlit abrirá a aplicação no navegador.
 
