@@ -302,9 +302,8 @@ status do processamento;
 resultado do diagnóstico;
 mRNA maduro, quando aplicável.
 
+no formato: linha;status;resultado;mRNA_maduro
+
 O formato utilizado é:
 
 linha;status;resultado;mRNA_maduro
-
-                                           ▼
-                                      mRNA MADURO
