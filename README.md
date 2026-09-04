@@ -305,5 +305,6 @@ mRNA maduro, quando aplicável.
 O formato utilizado é:
 
 linha;status;resultado;mRNA_maduro
+
                                            ▼
                                       mRNA MADURO
