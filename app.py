@@ -47,40 +47,10 @@ def destacar_erro(sequencia, resultado):
     )
 
 
-    # BUG - sítio 5'
-    # Destaca GU quando existir
-    if resultado == "BUG - sítio 5'":
-
-        if "GU" in sequencia:
-
-            sequencia = sequencia.replace(
-                "GU",
-                "<span style='color:red;font-weight:bold'>GU</span>",
-                1
-            )
-
-
-        return sequencia
-
-
-
-    # BUG - branch point
-    # Destaca a adenina candidata
-    elif resultado == "BUG - branch point":
-
-        sequencia = sequencia.replace(
-            "A",
-            "<span style='color:red;font-weight:bold'>A</span>",
-            1
-        )
-
-        return sequencia
-
-
-
-    # BUG - sítio 3'
-    # Destaca AG
-    elif resultado == "BUG - sítio 3'":
+    # BUG - sítio 5' ausente
+    # Existe AG, mas não há GU anterior compatível.
+    # Destaca o AG encontrado.
+    if resultado == "BUG - sítio 5' ausente":
 
         if "AG" in sequencia:
 
@@ -94,37 +64,33 @@ def destacar_erro(sequencia, resultado):
 
 
 
-    # BUG - íntron incompleto
-    # Destaca toda a sequência porque falta uma estrutura
-    elif resultado == "BUG - íntron incompleto":
-
-        return (
-            "<span style='color:red;font-weight:bold'>"
-            + sequencia +
-            "</span>"
-        )
-
-
-
-    # AMBÍGUO - splicing alternativo
-    # Destaca os possíveis pontos
-    elif resultado == "AMBÍGUO - splicing alternativo":
-
-        sequencia = sequencia.replace(
-            "GU",
-            "<span style='color:red;font-weight:bold'>GU</span>"
-        )
-
-        sequencia = sequencia.replace(
-            "AG",
-            "<span style='color:red;font-weight:bold'>AG</span>"
-        )
+    # BUG - branch point
+    # Não existe adenina válida entre 10 e 30 nt antes do AG.
+    # Não destaca uma adenina arbitrária.
+    elif resultado == "BUG - branch point":
 
         return sequencia
 
 
 
-    # CORRETO
+    # BUG - sítio 3' ausente
+    # Existe GU, mas não há AG posterior compatível.
+    # Destaca o GU encontrado.
+    elif resultado == "BUG - sítio 3' ausente":
+
+        if "GU" in sequencia:
+
+            sequencia = sequencia.replace(
+                "GU",
+                "<span style='color:red;font-weight:bold'>GU</span>",
+                1
+            )
+
+        return sequencia
+
+
+
+    # CORRETO ou outro diagnóstico
     else:
 
         return sequencia
@@ -136,15 +102,11 @@ def gerar_diagnostico(resultados):
 
         "CORRETO": 0,
 
-        "BUG - sítio 5'": 0,
+        "BUG - sítio 5' ausente": 0,
 
         "BUG - branch point": 0,
 
-        "BUG - sítio 3'": 0,
-
-        "BUG - íntron incompleto": 0,
-
-        "AMBÍGUO - splicing alternativo": 0
+        "BUG - sítio 3' ausente": 0
 
     }
 
@@ -172,12 +134,19 @@ def gerar_arquivo_exportacao(resultados):
 
     for resultado in resultados:
 
+        if resultado["Status"] == "CORRETO":
+            status_exportado = "OK"
+            mrna_exportado = resultado["mRNA maduro"]
+        else:
+            status_exportado = "ERRO"
+            mrna_exportado = "NÃO GERADO"
+
         linhas.append(
 
             f"{resultado['Entrada']};"
-            f"{resultado['Status']};"
+            f"{status_exportado};"
             f"{resultado['Resultado']};"
-            f"{resultado['mRNA maduro']}"
+            f"{mrna_exportado}"
 
         )
 
@@ -339,7 +308,7 @@ st.divider()
 st.header("📂 Entradas")
 
 
-nome_arquivo = "BioCompiler_2_0_entrada_60_casos.txt"
+nome_arquivo = "BioCompiler2_entrada_40_casos_modelo_oficial.txt"
 
 
 caminho = os.path.join(

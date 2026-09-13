@@ -1,7 +1,7 @@
 from pathlib import Path
 
 CAP_5 = "m7Gppp"
-TAMANHO_CAuda_POLI_A = 100
+TAMANHO_CAUDA_POLI_A = 100
 BASES_RNA = {"A", "U", "C", "G"}
 
 def validar_caracteres(sequencia):
@@ -59,7 +59,7 @@ def adicionar_cap(sequencia):
     return CAP_5 + sequencia
 
 def adicionar_cauda_poli_a(sequencia):
-    return sequencia + ("A" * TAMANHO_CAuda_POLI_A)
+    return sequencia + ("A" * TAMANHO_CAUDA_POLI_A)
 
 def gerar_mrna_maduro(sequencia_processada):
     sequencia_com_cap = adicionar_cap(sequencia_processada)
@@ -74,49 +74,28 @@ def processar_sequencia(sequencia):
         }
 
     sitios_5 = encontrar_sitios_5(sequencia)
-
-    if not sitios_5:
-        return {
-            "status": "ERRO",
-            "resultado": "BUG - sítio 5'",
-            "mrna_maduro": None
-        }
-
     sitios_3 = encontrar_sitios_3(sequencia)
-    tem_ag_depois = False
 
-    for gu in sitios_5:
-        for ag in sitios_3:
-            if ag > gu + 1:
-                tem_ag_depois = True
-                break
-        if tem_ag_depois:
-            break
+    tem_par_gu_ag = any(
+        ag > gu + 1
+        for gu in sitios_5
+        for ag in sitios_3
+    )
 
-    if not tem_ag_depois:
-        for gu in sitios_5:
-            nucleotideos_apos_gu = len(sequencia) - (gu + 2)
+    if not tem_par_gu_ag:
+        if sitios_3:
+            return {
+                "status": "ERRO",
+                "resultado": "BUG - sítio 5' ausente",
+                "mrna_maduro": None
+            }
 
-            if nucleotideos_apos_gu < 12:
-                return {
-                    "status": "ERRO",
-                    "resultado": "BUG - sítio 5'",
-                    "mrna_maduro": None
-                }
-
-            if nucleotideos_apos_gu == 12:
-                return {
-                    "status": "ERRO",
-                    "resultado": "BUG - íntron incompleto",
-                    "mrna_maduro": None
-                }
-
-        return {
-            "status": "ERRO",
-            "resultado": "BUG - sítio 3'",
-            "mrna_maduro": None
-        }
-
+        if sitios_5:
+            return {
+                "status": "ERRO",
+                "resultado": "BUG - sítio 3' ausente",
+                "mrna_maduro": None
+            }
     candidatos = encontrar_candidatos_intron(sequencia)
 
     if len(candidatos) == 0:
@@ -125,14 +104,7 @@ def processar_sequencia(sequencia):
             "resultado": "BUG - branch point",
             "mrna_maduro": None
         }
-
-    if len(candidatos) > 1:
-        return {
-            "status": "AMBÍGUO",
-            "resultado": "AMBÍGUO - splicing alternativo",
-            "mrna_maduro": None
-        }
-
+    
     candidato = candidatos[0]
     rna_splicado = fazer_splicing(
         sequencia,
@@ -187,13 +159,19 @@ def exportar_resultados(resultados, caminho_saida):
         arquivo.write("linha;status;resultado;mRNA_maduro\n")
 
         for resultado in resultados:
+            if resultado["status"] == "CORRETO":
+                status_exportado = "OK"
+                mrna_exportado = resultado["mrna_maduro"]
+            else:
+                status_exportado = "ERRO"
+                mrna_exportado = "NÃO GERADO"
+
             arquivo.write(
                 f"{resultado['linha']};"
-                f"{resultado['status']};"
+                f"{status_exportado};"
                 f"{resultado['resultado']};"
-                f"{resultado['mrna_maduro']}\n"
+                f"{mrna_exportado}\n"
             )
-
 def mostrar_resumo(resultados):
     contagem = {}
 
@@ -207,11 +185,9 @@ def mostrar_resumo(resultados):
 
     tipos = [
         "CORRETO",
-        "BUG - sítio 5'",
+        "BUG - sítio 5' ausente",
         "BUG - branch point",
-        "BUG - sítio 3'",
-        "BUG - íntron incompleto",
-        "AMBÍGUO - splicing alternativo"
+        "BUG - sítio 3' ausente",
     ]
 
     for tipo in tipos:
@@ -226,7 +202,7 @@ if __name__ == "__main__":
     print("BIOCOMPILER 2.0 - RNA PROCESSOR")
     print("=" * 60)
 
-    arquivo_entrada = "BioCompiler_2_0_entrada_60_casos.txt"
+    arquivo_entrada = "BioCompiler2_entrada_40_casos_modelo_oficial.txt"
     arquivo_saida = "resultados.txt"
 
     try:
