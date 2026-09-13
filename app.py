@@ -128,7 +128,7 @@ def gerar_arquivo_exportacao(resultados):
     linhas = []
 
     linhas.append(
-        "linha;status;resultado;mrna_maduro"
+        "linha;status;resultado;mRNA_maduro"
     )
 
 
